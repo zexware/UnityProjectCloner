@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31105.61
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityProjectCloner", "UnityProjectCloner.csproj", "{6B04DB4A-65AE-49E9-A305-877AD41C6AE4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6B04DB4A-65AE-49E9-A305-877AD41C6AE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B04DB4A-65AE-49E9-A305-877AD41C6AE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B04DB4A-65AE-49E9-A305-877AD41C6AE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B04DB4A-65AE-49E9-A305-877AD41C6AE4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0FAE15E5-B73E-4242-A016-D8C61B4F07A9}
+	EndGlobalSection
+EndGlobal
