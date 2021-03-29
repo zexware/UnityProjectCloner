@@ -27,6 +27,8 @@ namespace UnityProjectCloner
             notifyIcon.Text = "Unity Project Cloner";
             notifyIcon.Icon = Properties.Resources.app;
             notifyIcon.MouseClick += NotifyIcon_MouseClick;
+            txtOutput.Text = Properties.Settings.Default.lastOutputDir;
+            txtProject.Text = Properties.Settings.Default.lastProjectDir;
         }
 
         private void NotifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -91,6 +93,9 @@ namespace UnityProjectCloner
                 lblInfo.Visibility = Visibility.Visible;
                 lblInfo.Content = "Syncing Project, Please wait..";
                 notifyIcon.Icon = Properties.Resources.warning;
+                Properties.Settings.Default.lastProjectDir = rootDir;
+                Properties.Settings.Default.lastOutputDir = outputDir;
+                Properties.Settings.Default.Save();
             }
             void _stopActions()
             {
@@ -152,15 +157,22 @@ namespace UnityProjectCloner
                     //Add this to outputDir for calculating final path
                     var finalPath = Path.GetFullPath(outputDir + "\\" + relativePath);
                     //Now, let's copy :V 
-                    if (Directory.Exists(fp))
+                    try
                     {
-                        //Create the directory
-                        Directory.CreateDirectory(finalPath);
+                        if (Directory.Exists(fp))
+                        {
+                            //Create the directory
+                            Directory.CreateDirectory(finalPath);
+                        }
+                        else if (File.Exists(fp))
+                        {
+                            //Copy the file
+                            File.Copy(fp, finalPath, true);
+                        }
                     }
-                    else if (File.Exists(fp))
+                    catch
                     {
-                        //Copy the file
-                        File.Copy(fp, finalPath, true);
+
                     }
                 });
                 SetNotifyIcon(false);
@@ -181,16 +193,24 @@ namespace UnityProjectCloner
                     var relativePath = fp.Substring(rootDir.Length);
                     //Add this to outputDir for calculating final path
                     var finalPath = Path.GetFullPath(outputDir + "\\" + relativePath);
-                    //Now, let's delete 
-                    if (Directory.Exists(finalPath))
+                    //Now, let's delete
+                    try
                     {
-                        //Delete the directory
-                        Directory.Delete(finalPath, true);
+                        if (Directory.Exists(finalPath))
+                        {
+                            //Delete the directory
+                            Directory.Delete(finalPath, true);
+                        }
+                        else if (File.Exists(finalPath))
+                        {
+                            //Delete the file
+
+                            File.Delete(finalPath);
+                        }
                     }
-                    else if (File.Exists(finalPath))
+                    catch
                     {
-                        //Delete the file
-                        File.Delete(finalPath);
+
                     }
                 });
                 SetNotifyIcon(false);
@@ -225,8 +245,16 @@ namespace UnityProjectCloner
                     }
                     else if (File.Exists(finalPath))
                     {
-                        //Move the file with new name
-                        File.Move(finalPath, nFinalPath);
+                        //Move the file with new name. These events are not really handled well because these 
+                        //files might already be in use, and moving them won't work. 
+                        try
+                        {
+                            File.Move(finalPath, nFinalPath);
+                        }
+                        catch
+                        {
+
+                        }
                     }
                 });
                 SetNotifyIcon(false);
@@ -252,7 +280,15 @@ namespace UnityProjectCloner
                     if (File.Exists(fp))
                     {
                         //Copy the file
-                        File.Copy(fp, finalPath, true);
+                        try
+                        {
+                            File.Copy(fp, finalPath, true);
+                        }
+                        catch
+                        {
+                            //Sometimes we get read errors due to locks (such as on user-mapped files). In such case, we 
+                            //can just ignore those errors because the important files are synced anyway
+                        }
                     }
                 });
                 SetNotifyIcon(false);
@@ -263,7 +299,7 @@ namespace UnityProjectCloner
         {
             foreach (var s in exclusions)
             {
-                if (inp.Contains(s)) return true;
+                if (inp.ToLower().Contains(s.ToLower())) return true;
             }
             return false;
         }
@@ -299,15 +335,29 @@ namespace UnityProjectCloner
                             if (File.GetLastWriteTimeUtc(f) > File.GetLastWriteTimeUtc(finalPath)) //f is newer than finalPath?
                             {
                                 //Replace finalPath with f
-                                File.Copy(f, finalPath, true);
+                                try
+                                {
+                                    File.Copy(f, finalPath, true);
+                                }
+                                catch
+                                {
+                                    //Sometimes we get read errors due to locks (such as on user-mapped files). In such case, we 
+                                    //can just ignore those errors because the important files are synced anyway
+                                }
                             }
                         }
                         else
                         {
-                            //Just copy.
-                            if (Directory.Exists(Path.GetDirectoryName(finalPath)) == false)
-                                Directory.CreateDirectory(Path.GetDirectoryName(finalPath));
-                            File.Copy(f, finalPath);
+                            try
+                            {
+                                //Just copy.
+                                if (Directory.Exists(Path.GetDirectoryName(finalPath)) == false)
+                                    Directory.CreateDirectory(Path.GetDirectoryName(finalPath));
+                                File.Copy(f, finalPath);
+                            }
+                            catch
+                            {
+                            }
                         }
                         fCount++;
                     }
