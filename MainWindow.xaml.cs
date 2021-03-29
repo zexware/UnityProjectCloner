@@ -17,6 +17,8 @@ namespace UnityProjectCloner
         string outputDir;
         string rootDir;
         CancellationTokenSource cts;
+        string[] exclusions = new string[] { "UnityLockFile", ".lck", ".lock"};
+
 
         public MainWindow()
         {
@@ -139,6 +141,7 @@ namespace UnityProjectCloner
         {
             if (e.ChangeType == WatcherChangeTypes.Created)
             {
+                if (CheckExclusion(e.FullPath)) return;
                 SetNotifyIcon(true);
                 await Task.Run(delegate
                 {
@@ -168,6 +171,7 @@ namespace UnityProjectCloner
         {
             if (e.ChangeType == WatcherChangeTypes.Deleted)
             {
+                if (CheckExclusion(e.FullPath)) return;
                 SetNotifyIcon(true);
                 await Task.Run(delegate
                 {
@@ -197,6 +201,7 @@ namespace UnityProjectCloner
         {
             if (e.ChangeType == WatcherChangeTypes.Renamed)
             {
+                if (CheckExclusion(e.FullPath)) return;
                 SetNotifyIcon(true);
                 await Task.Run(delegate
                 {
@@ -233,6 +238,7 @@ namespace UnityProjectCloner
             //Here, a file is modified. We just need to replace it
             if (e.ChangeType == WatcherChangeTypes.Changed)
             {
+                if (CheckExclusion(e.FullPath)) return;
                 SetNotifyIcon(true);
                 await Task.Run(delegate
                 {
@@ -253,6 +259,15 @@ namespace UnityProjectCloner
             }
         }
 
+        private bool CheckExclusion(string inp)
+        {
+            foreach (var s in exclusions)
+            {
+                if (inp.Contains(s)) return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// Completely synchronizes (copies) source directory to destinition directory (replacing only old files and copying new files).
         /// </summary>
@@ -270,10 +285,12 @@ namespace UnityProjectCloner
                 {
                     if (token.IsCancellationRequested) return;
                     var cDir = qDirs.Dequeue();
+                    if (CheckExclusion(cDir)) continue;
                     //Process cDir
                     foreach (var f in Directory.GetFiles(cDir))
                     {
                         if (token.IsCancellationRequested) return;
+                        if (CheckExclusion(f)) continue;
                         var finalPath = Path.GetFullPath(dest + "\\" + f.Substring(source.Length)); //Exclude root directory, append rest of the filename.
                                                                                                     //Copy the file to finalPath (if its new) 
                         if (File.Exists(finalPath))
@@ -298,6 +315,7 @@ namespace UnityProjectCloner
                     foreach (var dir in Directory.GetDirectories(cDir))
                     {
                         if (token.IsCancellationRequested) return;
+                        if (CheckExclusion(dir)) continue;
                         qDirs.Enqueue(dir);
                     }
                 }
