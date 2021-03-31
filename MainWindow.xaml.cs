@@ -74,6 +74,33 @@ namespace UnityProjectCloner
             outputDir = Path.GetFullPath(txtOutput.Text);
             rootDir = Path.GetFullPath(txtProject.Text);
 
+            //Symlink mode is handled here, because its simple to set up. We just call mklink on the target dir
+            if(radSymLink.IsChecked==true)
+            {
+                var dirs = new string[2]
+                {
+                    "Assets",
+                    "ProjectSettings"
+                };
+                foreach (var dir in dirs)
+                {
+                    var dirInput = Path.GetFullPath(rootDir + "\\" + dir);
+                    var dirOutput = Path.GetFullPath(outputDir + "\\" + dir);
+                    //Syntax for MKLINK is mklink /D [TARGET] [ORIGINAL]. Of course, requires to be ran as admin
+                    var p = new System.Diagnostics.Process();
+                    p.StartInfo.FileName = "cmd.exe";
+                    p.StartInfo.Arguments = "/c mklink /D";
+                    //Add quotation to inputs if they have spaces
+                    var filteredInputDir = dirInput.Contains(" ") ? "\"" + dirInput + "\"" : dirInput;
+                    var filteredOutputDir = dirOutput.Contains(" ") ? "\"" + dirOutput + "\"" : dirOutput;
+                    p.StartInfo.Arguments += $" {dirOutput} {dirInput}";
+                    p.StartInfo.Verb = "runas"; //To Run as Admin
+                    p.Start();
+                }
+                MessageBox.Show("Symlinks are created in "+outputDir, "Unity Project Cloner");
+                Environment.Exit(0);
+            }
+
             //Initialize the file system watcher
             watcher = new System.IO.FileSystemWatcher(txtProject.Text);  //Avoid lock files. 
             watcher.IncludeSubdirectories = true;
@@ -139,7 +166,11 @@ namespace UnityProjectCloner
             watcher.EnableRaisingEvents = false;
             notifyIcon.Visible = false;
             btnStop.IsEnabled = false;
-            cts.Cancel();
+            cts.Cancel(); 
+            btnRun.IsEnabled = true;
+            progressBar.Visibility = Visibility.Hidden;
+            lblInfo.Visibility = Visibility.Visible;
+            watcher.Dispose();
         }
 
         private async void Watcher_Created(object sender, System.IO.FileSystemEventArgs e)

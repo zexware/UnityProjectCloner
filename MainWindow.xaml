@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UnityProjectCloner"
         mc:Ignorable="d" ResizeMode="NoResize"
-        Title="Unity Project Cloner" Height="238" Width="408">
+        Title="Unity Project Cloner" Height="283" Width="408">
     <Grid>
         <Label Content="Project:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="txtProject" HorizontalAlignment="Left" Height="23" Margin="62,12,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="247"/>
@@ -13,11 +13,14 @@
         <Label Content="Save in:" HorizontalAlignment="Left" Margin="10,52,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="txtOutput" HorizontalAlignment="Left" Height="23" Margin="62,55,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="247"/>
         <Button x:Name="btnBrowseOutput" Content="BROWSE" HorizontalAlignment="Left" Margin="314,55,0,0" VerticalAlignment="Top" Width="75" Click="btnBrowseOutput_Click"/>
-        <Button x:Name="btnRun" Content="RUN IN BACKGROUND" HorizontalAlignment="Left" Margin="62,96,0,0" VerticalAlignment="Top" Width="247" Click="btnRun_Click"/>
-        <Button x:Name="btnStop" Content="STOP" HorizontalAlignment="Left" Margin="62,124,0,0" VerticalAlignment="Top" Width="247" IsEnabled="False" Click="btnStop_Click"/>
+        <Button x:Name="btnRun" Content="RUN IN BACKGROUND" HorizontalAlignment="Center" Margin="0,114,0,0" VerticalAlignment="Top" Width="322" Click="btnRun_Click"/>
+        <Button x:Name="btnStop" Content="STOP" HorizontalAlignment="Center" Margin="40,142,40,0" VerticalAlignment="Top" Width="322" IsEnabled="False" Click="btnStop_Click"/>
         <Label Content="Created by @AB-70 // @i0x46" HorizontalAlignment="Left"  Height="26" VerticalAlignment="Bottom"/>
         <Label Content="Zexware, Ltd." HorizontalAlignment="Right"  VerticalAlignment="Bottom"/>
-        <ProgressBar x:Name="progressBar" Height="15" Margin="10,156,10,0" VerticalAlignment="Top" IsIndeterminate="True" Visibility="Hidden"/>
-        <Label x:Name="lblInfo" Content="Please wait..." HorizontalAlignment="Center"  Height="26" VerticalAlignment="Bottom" Margin="0,0,0,9" Visibility="Hidden"/>
+        <ProgressBar x:Name="progressBar" Height="15" Margin="10,178,10,0" VerticalAlignment="Top" IsIndeterminate="True" Visibility="Hidden"/>
+        <Label x:Name="lblInfo" Content="Please wait..." HorizontalAlignment="Center"  Height="26" VerticalAlignment="Bottom" Margin="163,0,163,30" Visibility="Hidden"/>
+        <Label Content="Method:" HorizontalAlignment="Left" Margin="10,83,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="radFileWatcher" Content="File System Watcher" HorizontalAlignment="Left" Height="21" Margin="70,88,0,0" VerticalAlignment="Top" Width="138" IsChecked="True"/>
+        <RadioButton x:Name="radSymLink" Content="Symlink (admin only)" HorizontalAlignment="Left" Height="21" Margin="213,88,0,0" VerticalAlignment="Top" Width="138"/>
     </Grid>
 </Window>
